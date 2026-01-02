@@ -1,0 +1,103 @@
+<section class="page">
+  <header class="hero">
+    <div class="hero__content">      
+      <h1>Compra de Vouchers</h1>
+      <p>
+        Experiencias para compartir en el Sheraton. Elegi el voucher ideal y
+        regalalo en minutos.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#vouchers">Ver vouchers</a>
+        <a class="btn btn--ghost" href="mailto:reservas@sheraton.com">Consultar</a>
+      </div>
+      <div class="hero__stats">
+        <div class="stat">
+          <span class="stat__value">24 hs</span>
+          <span class="stat__label">Entrega digital</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">12 meses</span>
+          <span class="stat__label">Validez</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">Flexible</span>
+          <span class="stat__label">Fecha abierta</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero__panel">
+      <div class="panel-card">
+        <h2>Incluye</h2>
+        <ul>
+          <li>Confirmacion inmediata</li>
+          <li>Atencion personalizada</li>
+          <li>Experiencias premium</li>
+        </ul>
+        <div class="panel-card__note">
+          Compra segura y soporte dedicado para reservas.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="vouchers" class="voucher-list">
+    @for (voucher of vouchers; track voucher.id) {
+      <article class="voucher-card">
+        <div class="voucher-card__header">
+          <h3>{{ voucher.title }}</h3>
+          <span class="voucher-card__amount">{{ formatAmount(voucher.amount) }}</span>
+        </div>
+        <p>{{ voucher.description }}</p>
+        <button class="btn btn--primary" type="button" (click)="openVoucher(voucher)">
+          Elegir voucher
+        </button>
+      </article>
+    }
+  </section>
+
+  <section class="footer-note">
+    <p>
+      Necesitas ayuda con tu compra? Escribinos a
+      <a href="mailto:reservas@sheraton.com">reservas@sheraton.com</a>.
+    </p>
+  </section>
+</section>
+
+@if (activeVoucher(); as voucher) {
+  <div class="modal">
+    <div class="modal__backdrop" (click)="closeVoucher()"></div>
+    <div class="modal__card" role="dialog" aria-modal="true">
+      <div class="modal__header">
+        <h3>{{ voucher.title }}</h3>
+        <button class="modal__close" type="button" (click)="closeVoucher()">
+          Cerrar
+        </button>
+      </div>
+      <p>{{ voucher.description }}</p>
+      <div class="modal__amount">{{ formatAmount(voucher.amount) }}</div>
+      <div class="modal__actions">
+        <button
+          class="btn btn--primary"
+          type="button"
+          (click)="openCheckout(voucher)"
+          [disabled]="isCheckoutLoading()"
+          [attr.aria-busy]="isCheckoutLoading() ? 'true' : null"
+        >
+          @if (isCheckoutLoading()) {
+            Abriendo...
+          } @else {
+            Pagar con Mercado Pago
+          }
+        </button>
+        <button class="btn btn--ghost" type="button" (click)="closeVoucher()">
+          Volver
+        </button>
+      </div>
+      @if (checkoutError()) {
+        <div class="modal__hint">
+          {{ checkoutError() }}
+        </div>
+      }
+    </div>
+  </div>
+}
